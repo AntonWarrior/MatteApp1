@@ -1,0 +1,80 @@
+#:import utils kivy.utils
+#/import DerivataApp1/Dervivata5.py
+#:include kv/homescreen.kv
+#:include kv/raknascreen.kv
+
+
+<RaknaScreen>
+
+    problem_text: root.problem_text
+    my_math_text: root.my_math_text
+#    ratt_svar_text: root.ratt_svar_text
+
+    canvas:
+        Color:
+            rgb: utils.get_color_from_hex("#6e6e6e")
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    FloatLayout:
+        Label:
+            id: ED_1
+            text: root.edu_txt
+            size_hint: .9, .5
+            pos_hint: {"top": 1, "right": .9}
+            color:  utils.get_color_from_hex("##ededed")
+        Label:
+            text: root.my_math + ', ' + root.my_math_text + ':  y = ' + root.problem_text
+            size_hint: .8, .5
+            bold: True
+            pos_hint: {"top": .85, "right": .9}
+            color: utils.get_color_from_hex("##ededed")
+        TextInput:
+            id: ratt_svar_id
+            hint_text: "Skriv ditt svar här + Enter när Du är klar"
+            size_hint: .8, .1
+            pos_hint: {"top": .5, "right": .9}
+            write_tab: False
+            multiline: False
+            on_text_validate:
+                root.check_my_answer(self.text)
+                correct_answer_text.text=root.ratt_svar_text
+
+        Label:
+            id: correct_answer_text
+          #  focus: True
+            text: root.ratt_svar_text
+            size_hint: .8, .5
+            bold: True
+            pos_hint: {"top": .6, "right": .9}
+            color: utils.get_color_from_hex("##ededed")
+
+        Label:
+            id: correct_answer
+            text: root.ratt_svar_text
+            size_hint: .8, .5
+            bold: True
+            pos_hint: {"top": .6, "right": .9}
+            color: utils.get_color_from_hex("##ededed")
+
+        #lägg default 'down'
+        Button:
+            id: B1
+            text: "Skapa nytt Tal"
+            size_hint: .5, .1
+            pos_hint: {"top": .3, "right": .75}
+            on_press: root.do_math()
+            on_release:
+                root.update()
+                root.animate_text()
+        Button:
+            id: B2
+            text: 'Back'
+            size_hint: .3, .05
+            pos_hint: {"top": .15, "right": .65}
+            on_release:
+                app.change_screen("home_screen")
+                root.manager.transition.direction = 'right'
+
+
+
