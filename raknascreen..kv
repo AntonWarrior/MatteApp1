@@ -29,16 +29,25 @@
             bold: True
             pos_hint: {"top": .85, "right": .9}
             color: utils.get_color_from_hex("##ededed")
+        Label:
+            id: raknare
+            text: str(root.antal)
+            size_hint: .8, .5
+            pos_hint: {"top": .6, "right": .48}
         TextInput:
             id: ratt_svar_id
             hint_text: "Skriv ditt svar här + Enter när Du är klar"
             size_hint: .8, .1
             pos_hint: {"top": .5, "right": .9}
             write_tab: False
+            focused: True
             multiline: False
             on_text_validate:
                 root.check_my_answer(self.text)
                 correct_answer_text.text=root.ratt_svar_text
+                self.focused = True
+                root.tictoc('toc')
+
 
         Label:
             id: correct_answer_text
@@ -60,11 +69,14 @@
         #lägg default 'down'
         Button:
             id: B1
-            text: "Skapa nytt Tal"
+            text: "Start"
+            bold:True
             size_hint: .5, .1
             pos_hint: {"top": .3, "right": .75}
             on_press: root.do_math()
             on_release:
+                root.tictoc('tic')
+                root.tictoc('toc')
                 root.update()
                 root.animate_text()
         Button:
