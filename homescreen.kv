@@ -11,16 +11,21 @@
     #
     canvas:
         Color:
-            rgb: utils.get_color_from_hex("#6e6e6e")
+            rgb: utils.get_color_from_hex("#737373")
         Rectangle:
             size: self.size
             pos: self.pos
     GridLayout:
-        cols: 6
+        cols: 7
         orientation: 'vertical'
         Label:
             text: 'Matteproblem'
             size_hint:0.6,0.2
+
+        Label:
+            id: st
+            text: 'st'
+            size_hint:0.1,0.2
 
         Label:
             text: 'Minuter'
@@ -53,13 +58,15 @@
             on_press:
                 root.knapp_kedjeregeln.TB0_state = 'down'
                 root.knapp_poly_hel.TB0_state = 'normal'
-            background_color: utils.get_color_from_hex("e30b0b")
+            background_color: utils.get_color_from_hex("f5f5f5")
             state: root.knapp_kedjeregeln.TB0_state
+        Button:
+            text:str(root.knapp_kedjeregeln.antal) + ' st'
         Button:
             text:str(root.knapp_kedjeregeln.minuter_ova_regel) + ' min'
 
         Button:
-            text:str(root.knapp_kedjeregeln.felproc__ova_regel) + '%'
+            text:str(root.knapp_kedjeregeln.felproc_ova_regel) + '%'
 
         ToggleButton:
  #           id: TB11
@@ -69,6 +76,7 @@
                 root.knapp_kedjeregeln.TB11_state = 'down'
                 root.knapp_kedjeregeln.TB11_state = 'normal'
             state: root.knapp_kedjeregeln.TB11_state
+            background_color: utils.get_color_from_hex("f5f5f5")
         ToggleButton:
  #           id: TB12
             group: 'kedjeregeln'
@@ -77,12 +85,16 @@
                 root.knapp_kedjeregeln.TB11_state = 'normal'
                 root.knapp_kedjeregeln.TB12_state = 'down'
             state: root.knapp_kedjeregeln.TB12_state
+            background_color: utils.get_color_from_hex("f5f5f5")
 
         TextInput:
  #           id:TI_1
-            text: str(root.knapp_kedjeregeln.n_tal)
+            text: str(root.knapp_kedjeregeln.n_st)
             halign: 'center'
             multiline: False
+            on_text:
+                root.knapp_kedjeregeln.n_st = int(self.text)
+                print(root.knapp_kedjeregeln.n_st)
 
         #rad 2
         ToggleButton:
@@ -95,13 +107,15 @@
             on_press:
                 root.knapp_kedjeregeln.TB0_state = 'normal'
                 root.knapp_poly_hel.TB0_state = 'down'
-            background_color: utils.get_color_from_hex("#e30b0b")
+            background_color: utils.get_color_from_hex("#f5f5f5")
             state: root.knapp_poly_hel.TB0_state
+        Button:
+            text:str(root.knapp_poly_hel.antal) + ' st'
         Button:
             text:str(root.knapp_poly_hel.minuter_ova_regel) + ' min'
 
         Button:
-            text:str(root.knapp_poly_hel.felproc__ova_regel) + '%'
+            text:str(root.knapp_poly_hel.felproc_ova_regel) + '%'
 
         ToggleButton:
  #           id: TB21
@@ -114,6 +128,8 @@
               #  root.animate_text()
             state: root.knapp_poly_hel.TB11_state
             group: 'TB_rad2'
+            background_color: utils.get_color_from_hex("f5f5f5")
+
 
         ToggleButton:
  #           id: TB22
@@ -126,12 +142,16 @@
                 #root.animate_text()
             state: root.knapp_poly_hel.TB12_state
             group: 'TB_rad2'
+            background_color: utils.get_color_from_hex("f5f5f5")
 
         TextInput:
-#            id:TI_2
-            text: str(root.knapp_poly_hel.n_tal)
+ #           id:TI_2
+            text: str(root.knapp_poly_hel.n_st)
             halign: 'center'
             multiline: False
+            on_text:
+                root.knapp_poly_hel.n_st = int(self.text)
+                print(root.knapp_poly_hel.n_st)
 
         #Nedersta raden
         Button:
