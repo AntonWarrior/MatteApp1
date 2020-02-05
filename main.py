@@ -10,7 +10,10 @@ from sympy import *
 from sympy.parsing.sympy_parser import parse_expr
 from kivy.clock import Clock
 from kivy.core.window import Window
-
+import requests
+import json
+from datetime import datetime
+import pickle
 
 class My_Widget(Widget):
 
@@ -31,92 +34,187 @@ def start_loop(self,edu_mode):
     RaknaScreen.my_sign = self.my_sign
     RaknaScreen.n_st = self.n_st
     RaknaScreen.n = self.n
+    RaknaScreen.antal = self.antal
 
 
 #tar in data från alla knappar
 class ButtonData:
 
-    def __init__(self, problem_typ, minuter_ova_regel, felproc__ova_regel, n_tal, TB0_state, TB11_state, TB12_state):
+    def __init__(self, problem_typ, minuter_ova_regel, felproc_ova_regel, n_st, TB0_state, TB11_state, TB12_state, antal):
         self.problem_typ = problem_typ
         self.minuter_ova_regel = minuter_ova_regel
-        self.felproc__ova_regel = felproc__ova_regel
-        self.n_tal = n_tal
+        self.felproc_ova_regel = felproc_ova_regel
+        self.n_st = n_st
         self.TB0_state = TB0_state
         self.TB11_state = TB11_state
         self.TB12_state = TB12_state
+        self.antal = antal
 
-        #        super(HomeScreen,self).__init__(problem_typ,minuter_ova_regel,felproc__ova_regel,n_tal,TB0_state,TB1_state,TB2_state)
+        #        super(HomeScreen,self).__init__(problem_typ,minuter_ova_regel,felproc_ova_regel,n_st,TB0_state,TB1_state,TB2_state)
 
     @classmethod
-    def update_button_values(cls, TB0_state, TB11_state, TB12_state, n_tal):
+    def update_button_values(cls, TB0_state, TB11_state, TB12_state, n_st, antal):
         cls.TB0_state = TB0_state
         cls.TB11_state = TB11_state
         cls.TB12_state = TB12_state
-        cls.n_tal = n_tal
-        return cls(TB0_state, TB11_state, TB12_state, n_tal)
+        cls.n_st = n_st
+        cls.antal = antal
+
+        return cls(TB0_state, TB11_state, TB12_state, n_st, antal)
 
 
 #root
 class HomeScreen(Screen):
     practice_loop = BooleanProperty(False)
     practice_loop = False
+    antal = NumericProperty(0)
 
-    # Definiera default data för varje knapp. Ova och felprocent avses läsas från en dict
-    knapp_poly_hel = ButtonData(problem_typ='PolynomHel', minuter_ova_regel=str(0), felproc__ova_regel=str(10),
-                                n_tal=2, TB0_state='normal', TB11_state='down', TB12_state='normal')
+    try:
+        #
+        #outfile = open('data.txt', 'r')
+        #allt = json.load(outfile)
+        #outfile.close()
 
-  #  knapp_poly_halv = ButtonData(problem_typ='PolynomHalv', minuter_ova_regel=str(0), felproc__ova_regel=str(10),
-     #                            n_tal=2, TB0_state='normal', TB11_state='normal', TB12_state='normal', TB21_state='down', TB22_state='normal')
-   # knapp_exp_e = ButtonData(problem_typ='ExponentialE', minuter_ova_regel=str(0), felproc__ova_regel=str(10),
-    #                         n_tal=2, TB0_state='normal', TB11_state='normal', TB12_state='normal', TB21_state='down', TB22_state='normal')
-    #knapp_exp_n = ButtonData(problem_typ='Exponentialn', minuter_ova_regel=str(0), felproc__ova_regel=str(10),
-   #                          n_tal=2, TB0_state='normal', TB11_state='normal', TB12_state='normal', TB21_state='down', TB22_state='normal')
-    knapp_kedjeregeln = ButtonData(problem_typ='Kedjeregeln', minuter_ova_regel=str(0), felproc__ova_regel=str(10),
-                                   n_tal=2, TB0_state='down', TB11_state='down', TB12_state='normal')
-    dummy = ButtonData(problem_typ='none', minuter_ova_regel=str(0), felproc__ova_regel=str(10),
-                       n_tal=5, TB0_state='normal', TB11_state='normal', TB12_state='normal')
+        with open('data.txt', 'r') as outfile:
+            allt = json.load(outfile)
+        outfile.close()
+        #outfile.flush()
+
+        #
+        data = allt['PolynomHel']
+        knapp_poly_hel = ButtonData(problem_typ='PolynomHel', minuter_ova_regel=str(sum(data['dt'])),
+                                    felproc_ova_regel=str(int(100*(1-sum(data['felprocent'])/len(data['felprocent'])))),
+                                    n_st=2, TB0_state='normal', TB11_state='down', TB12_state='normal',
+                                    antal=str(len(data['antal'])))
+        #
+        data = allt['PolynomHel']
+        knapp_poly_hel = ButtonData(problem_typ='PolynomHalv', minuter_ova_regel=str(sum(data['dt'])),
+                                    felproc_ova_regel=str(int(100*(1-sum(data['felprocent'])/len(data['felprocent'])))),
+                                    n_st=2, TB0_state='normal', TB11_state='down', TB12_state='normal',
+                                    antal=str(len(data['antal'])))
+        #
+        data = allt['PolynomHel']
+        knapp_poly_hel = ButtonData(problem_typ='ExponentialE', minuter_ova_regel=str(sum(data['dt'])),
+                                    felproc_ova_regel=str(int(100*(1-sum(data['felprocent'])/len(data['felprocent'])))),
+                                    n_st=2, TB0_state='normal', TB11_state='down', TB12_state='normal',
+                                    antal=str(len(data['antal'])))
+        #
+        data = allt['PolynomHel']
+        knapp_poly_hel = ButtonData(problem_typ='Exponentialn', minuter_ova_regel=str(sum(data['dt'])),
+                                    felproc_ova_regel=str(int(100*(1-sum(data['felprocent'])/len(data['felprocent'])))),
+                                    n_st=2, TB0_state='normal', TB11_state='down', TB12_state='normal',
+                                    antal=str(len(data['antal'])))
+        #
+        data = allt['Kedjeregeln']
+        knapp_kedjeregeln = ButtonData(problem_typ='Kedjeregeln', minuter_ova_regel=str(sum(data['dt'])),
+                                    felproc_ova_regel=str(int(100*(1-sum(data['felprocent'])/len(data['felprocent'])))),
+                                    n_st=2, TB0_state='normal', TB11_state='down', TB12_state='normal',
+                                    antal=str(len(data['antal'])))
+        #
+
+    except:
+        allt = dict()
+        # Definiera default data för varje knapp. Ova och felprocent avses läsas från en dict
+        knapp_poly_hel = ButtonData(problem_typ='PolynomHel', minuter_ova_regel=str(0), felproc_ova_regel=str(0),
+                                    n_st=2, TB0_state='normal', TB11_state='down', TB12_state='normal', antal=0)
+        #
+        knapp_poly_halv = ButtonData(problem_typ='PolynomHalv', minuter_ova_regel=str(0), felproc_ova_regel=str(0),
+                                    n_st=2, TB0_state='normal', TB11_state='down', TB12_state='normal', antal=0)
+        #
+        knapp_exp_e = ButtonData(problem_typ='ExponentialE', minuter_ova_regel=str(0), felproc_ova_regel=str(0),
+                                    n_st=2, TB0_state='normal', TB11_state='down', TB12_state='normal', antal=0)
+        #
+        knapp_exp_n = ButtonData(problem_typ='Exponentialn', minuter_ova_regel=str(0), felproc_ova_regel=str(10),
+                                    n_st=2, TB0_state='normal', TB11_state='down', TB12_state='normal', antal=0)
+        #
+        knapp_kedjeregeln = ButtonData(problem_typ='Kedjeregeln', minuter_ova_regel=str(0), felproc_ova_regel=str(0),
+                                    n_st=2, TB0_state='normal', TB11_state='down', TB12_state='normal', antal=0)
+        #
+        #dummy = ButtonData(problem_typ='none', minuter_ova_regel=str(0), felproc_ova_regel=str(10),
+                      #     n_st=5, TB0_state='normal', TB11_state='normal', TB12_state='normal')
 
     button_homescreen = OptionProperty("None", options=["down", "normal", "None"])
 
 
 
+
+
     def selected_method(self, method1, method2, edu_sign):
-        process_state = 'dummy'
-        self.my_case = HomeScreen.dummy
-        print(method1.TB0_state)
-        print(method2.TB0_state)
+ #       process_state = 'dummy'
+#        self.my_case = HomeScreen.dummy
+#        print(method1.TB0_state)
+#        print(method2.TB0_state)
         #Metod 1
+
         if method1.TB0_state == 'down':
-            print(method1.problem_typ)
-            print(method1.TB11_state)
-            print(method1.TB12_state)
-            self.my_case = method1
+            self.problem_typ = method1.problem_typ
+            self.minuter_ova_regel = method1.minuter_ova_regel
+            self.felproc_ova_regel = method1.felproc_ova_regel
+            self.TB0_state = method1.TB0_state
+            self.TB11_state = method1.TB11_state
+            self.TB12_state = method1.TB12_state
+            self.n_st = method1.n_st
+            self.antal = method1.antal
             if method1.TB11_state == 'down':
                 process_state = 'Förenkla'
             if method1.TB12_state == 'down':
                 process_state = 'Expandera'
+            try:
+                RaknaScreen.data = RaknaScreen.allt['Kedjeregeln']
+                print('apa')
+            except:
+                try:
+                    RaknaScreen.allt = HomeScreen.allt
+                    RaknaScreen.data = HomeScreen.allt['Kedjeregeln']
+                except:
+                    print('röva')
+                    RaknaScreen.data = {'antal': [], 'timestamp': [], 'felprocent': [], 'dt': []}
+                    RaknaScreen.allt['Kedjeregeln'] =  {'antal': [], 'timestamp': [], 'felprocent': [], 'dt': []}
 
         #Metod 2
         if method2.TB0_state == 'down':
-            self.my_case = method2
+            self.problem_typ = method2.problem_typ
+            self.minuter_ova_regel = method2.minuter_ova_regel
+            self.felproc_ova_regel = method2.felproc_ova_regel
+            self.TB0_state = method2.TB0_state
+            self.TB11_state = method2.TB11_state
+            self.TB12_state = method2.TB12_state
+            self.n_st = method2.n_st
+            self.antal = method2.antal
             if method2.TB11_state == 'down':
                 process_state = 'Derivera'
             if method2.TB12_state == 'down':
                 process_state = 'Integrera'
+            try:
+                RaknaScreen.data = RaknaScreen.allt['PolynomHel']
+            except:
+                try:
+                    RaknaScreen.allt = HomeScreen.allt
+                    RaknaScreen.data = HomeScreen.allt['PolynomHel']
+                except:
+                    RaknaScreen.data = {'antal': [], 'timestamp': [], 'felprocent': [], 'dt': []}
+                    RaknaScreen.allt['PolynomHel'] = RaknaScreen.data
 
-        print(self.my_case)
-        print(process_state)
+
 
         self.edu_sign = edu_sign
         # print(self.my_case.__dict__)
         # Skicka data till RaknaScreen
 
-        RaknaScreen.my_math_text = self.my_case.problem_typ
-        RaknaScreen.my_math = self.my_case.problem_typ
+
+        RaknaScreen.my_math_text = self.problem_typ
+        RaknaScreen.my_math = self.problem_typ
         RaknaScreen.edu_sign = self.edu_sign
-        RaknaScreen.n_st = self.my_case.n_tal
+        RaknaScreen.n_st = self.n_st
+        RaknaScreen.antal = self.antal
+        print(self.antal)
+        #
+        print(self.n_st)
+        #
         self.process_state = process_state
         RaknaScreen.process_state = process_state
+
+
 
 
     def animate_text(self):
@@ -132,6 +230,8 @@ class HomeScreen(Screen):
         self.ids.TB11.on_press = self.button_homescreen
         self.button_homescreen = self.knapp_poly_hel
         self.ids.TB12.on_press = self.button_homescreen
+
+        self.ids.antal.text = str(self.antal)
 
     @mainthread
     def update(self, *largs):
@@ -151,6 +251,7 @@ class RaknaScreen(Screen):
     string_raknascreen = StringProperty('')
     enter_answer = ObjectProperty('')
     ratt_svar_text = StringProperty('')
+    antal = NumericProperty(0)
 
 #    problem_text = ''
 #    my_math_text = ''
@@ -162,10 +263,21 @@ class RaknaScreen(Screen):
     my_sign = False
     n_st = 0
     n = 0
+    antal = 0
+    tic = 0
+    toc = 0
+    try:
+        allt
+    except:
+        #Tom data dict
+        data = {'antal': [], 'timestamp': [], 'felprocent': [], 'dt': []}
+        allt = dict()
 
 
+        #allt['Kedjeregeln'] = data
+        #allt['PolynomHel'] = data
 
-#    def __init__(self, problem_text, my_math_text, edu_txt, my_math, my_sign, n_st, n):
+    #    def __init__(self, problem_text, my_math_text, edu_txt, my_math, my_sign, n_st, n):
 #        self.problem_text = problem_text
 #        self.my_math_text = my_math_text
 #        self.edu_txt = edu_txt
@@ -175,6 +287,16 @@ class RaknaScreen(Screen):
 #        self.n = n
 #        super(RaknaScreen,self).__init__(problem_text, my_math_text, edu_txt, my_math, my_sign, n_st, n)
 
+    def tictoc(self,my_type):
+        if my_type=='tic':
+            RaknaScreen.tic = datetime.timestamp(datetime.now())
+            round(RaknaScreen.tic, 1)
+
+        if my_type=='toc':
+            RaknaScreen.toc = datetime.timestamp(datetime.now())
+            round(RaknaScreen.toc, 1)
+
+
     def do_math(self):
         # Konvertera text till integer
         n_st = int(self.n_st)
@@ -182,7 +304,7 @@ class RaknaScreen(Screen):
         #edu_mode = True
         # Max tal för Pn
         p_max = 10
-        n_tal = 10
+        n_st = 10
         t0 = 0
 
         #print(self.my_matte)
@@ -257,6 +379,7 @@ class RaknaScreen(Screen):
         RaknaScreen.my_sign = self.my_sign
         RaknaScreen.n_st = self.n_st
         RaknaScreen.n = self.n
+        RaknaScreen.antal = self.antal
 
         problem_text = self.problem_text
         my_math_text = self.my_math_text
@@ -267,6 +390,37 @@ class RaknaScreen(Screen):
         my_sign = self.my_sign
         n_st = self.n_st
         n = self.n
+        self.antal += 1
+        antal = self.antal
+        print(antal)
+
+        #data = {'antal': [], 'timestamp': [], 'felprocent': [], 'dt': []}
+        #with open('data.txt', 'w') as outfile:
+        RaknaScreen.data['antal'].append(antal)
+        RaknaScreen.data['timestamp'].append(RaknaScreen.tic)
+        RaknaScreen.data['dt'].append((RaknaScreen.toc - RaknaScreen.tic)/n_st/60)
+
+        if RaknaScreen.ratt_svar_text== 'Rätt Svar!':
+            RaknaScreen.data['felprocent'].append(1)
+        else:
+            RaknaScreen.data['felprocent'].append(0)
+
+        print(self.my_math)
+        try:
+            RaknaScreen.allt[self.my_math]['antal'].append(RaknaScreen.data['antal'].pop(len(RaknaScreen.data['antal'])))
+            RaknaScreen.allt[self.my_math]['timestamp'].append(RaknaScreen.data['timestamp'].pop(len(RaknaScreen.data['timestamp'])))
+            RaknaScreen.allt[self.my_math]['dt'].append(RaknaScreen.data['dt'].pop(len(RaknaScreen.data['dt'])))
+            RaknaScreen.allt[self.my_math]['felprocent'].append(RaknaScreen.data['felprocent'].pop(len(RaknaScreen.data['felprocent'])))
+        except:
+            #RaknaScreen.allt[self.my_math] = dict()
+            RaknaScreen.allt[self.my_math]['antal'] = list(RaknaScreen.data['antal'])
+            RaknaScreen.allt[self.my_math]['timestamp'] = list(RaknaScreen.data['timestamp'])
+            RaknaScreen.allt[self.my_math]['dt'] = list(RaknaScreen.data['dt'])
+            RaknaScreen.allt[self.my_math]['felprocent'] = list(RaknaScreen.data['felprocent'])
+
+        #print(RaknaScreen.data)
+        print(RaknaScreen.allt)
+        #json.dump(data, outfile)
 
         #bugkoll
         print(self.my_math)
@@ -280,14 +434,14 @@ class RaknaScreen(Screen):
 
 
 
-        return problem_text, my_math_text, edu_txt, my_math, my_sign, n_st, n, correct_answer
+        return problem_text, my_math_text, edu_txt, my_math, my_sign, n_st, n, correct_answer, antal
 
 
   #  def __init__(self,**kwargs):
    #     super(RaknaScreen.correct_answer_text, self).__init__(**kwargs)
     #   Window.bind(on_key_down=self._on_keyboard_down)
 
-   #def _on_keyboard_down(self, instance, keyboard, keycode, text, modifiers):
+   #def _on_keyboard_down(self, inantalance, keyboard, keycode, text, modifiers):
     #    if self.RaknaScreen.skriv_har and keycode == 40:  # 40 - Enter key pressed
      #       self.abc()
 
@@ -299,31 +453,67 @@ class RaknaScreen(Screen):
         #print( RaknaScreen.correct_answer)
         x1 = parse_expr(RaknaScreen.correct_answer)
         x2 = parse_expr(my_answer_txt)
-        print(x1==x2)
-        if x1==x2 :
-            ratt_svar_text= 'Rätt Svar!'
+        print(x1 == x2)
+        if x1 == x2:
+            ratt_svar_text = 'Rätt Svar!'
         else:
             ratt_svar_text = 'Fel! - Rätt svar är: ' + RaknaScreen.correct_answer
         print(ratt_svar_text)
         RaknaScreen.ratt_svar_text = ratt_svar_text
         self.ratt_svar_text = ratt_svar_text
+        RaknaScreen.antal = self.antal
         #
-        print(HomeScreen.practice_loop)
+        #outfile = open('data.txt', 'w')
+        #json.dump(RaknaScreen.allt, outfile)
+        #print('Dump2: data.txt')
+        #outfile.close()
+
+        with open('data.txt', 'w') as outfile:
+            json.dump(RaknaScreen.allt, outfile)
+
+        print('Dump2: data.txt')
+
+
+        #
+        #print(HomeScreen.practice_loop)
         if HomeScreen.practice_loop==False:
             print('a')
             RaknaScreen.do_math(self)
 
 
+
+
     #klocka för att uppdatera label
     def animate_text(self):
         Clock.schedule_interval(self.update_label, 0.1)
-#        Clock.schedule_interval(RaknaScreen.update_label(self,0.1), 0.1)
+        Clock.schedule_interval(self.focus_text_input, 0.1)
+    # #
+    #        Clock.schedule_interval(RaknaScreen.update_label(self,0.1), 0.1)
 
     #kolla label
     def update_label(self,dt):
         #edu text
         self.string_raknascreen = self.edu_txt
         self.ids.ED_1.text = self.string_raknascreen
+        self.ids.raknare.text = 'Antal: ' + str(self.antal)
+
+    def focus_text_input(self, dt):
+        self.ids.ratt_svar_id.focus = True
+
+
+
+
+   # def skicka_text(self, antal):
+
+    #    antal = {'antal': '0' + antal}
+#
+ #       with open('data.pickle', 'wb') as handle:
+  #          pickle.dump(antal, handle)
+
+   #     with open('data.pickle', 'rb') as handle:
+    #        b = pickle.load(handle)
+
+     #   print(antal == b)
         #correct answer
  #       self.string_raknascreen = self.correct_answer
  #       self.ids.correct_answer.text = self.ratt_svar_text
@@ -342,9 +532,20 @@ GUI = Builder.load_file("main.kv")
 class MainApp(App):
 
     canvas = RenderContext()
+    felproc_ova_regel = 2
+    antal = 1
 
     def build(self):
         return GUI
+
+    def on_start(self):
+        #hämta firebase datan
+        result = requests.get("https://derivataapp1.firebaseio.com/" + str(self.antal) + ".json")
+        print("was it okay?", result.ok)
+        #dekoda binär data från firebase
+        data = json.loads(result.content.decode())
+        print(data)
+
 
     def change_screen(self, screen_name):
         screen_manager = self.root.ids['screen_manager']
@@ -354,6 +555,7 @@ class MainApp(App):
     def update_canvas(self):
         s = MainApp.canvas
         s.ask_update()
+
 
 
 
