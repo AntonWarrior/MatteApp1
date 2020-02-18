@@ -58,15 +58,20 @@
             on_press:
                 root.knapp_kedjeregeln.TB0_state = 'down'
                 root.knapp_poly_hel.TB0_state = 'normal'
+                root.knapp_poly_halv.TB0_state = 'normal'
+                root.knapp_exp_e.TB0_state = 'normal'
+                root.knapp_exp_n.TB0_state = 'normal'
             background_color: utils.get_color_from_hex("f5f5f5")
             state: root.knapp_kedjeregeln.TB0_state
         Button:
-            text:str(root.knapp_kedjeregeln.antal) + ' st'
+            id: R1antal
+            text: root.knapp_kedjeregeln.antal + ' st'
         Button:
-            text:str(root.knapp_kedjeregeln.minuter_ova_regel) + ' min'
-
+            id: R1min
+            text: root.knapp_kedjeregeln.minuter_ova_regel + ' min'
         Button:
-            text:str(root.knapp_kedjeregeln.felproc_ova_regel) + '%'
+            id: R1proc
+            text: root.knapp_kedjeregeln.felproc_ova_regel + '%'
 
         ToggleButton:
  #           id: TB11
@@ -107,16 +112,20 @@
             on_press:
                 root.knapp_kedjeregeln.TB0_state = 'normal'
                 root.knapp_poly_hel.TB0_state = 'down'
+                root.knapp_poly_halv.TB0_state = 'normal'
+                root.knapp_exp_e.TB0_state = 'normal'
+                root.knapp_exp_n.TB0_state = 'normal'
             background_color: utils.get_color_from_hex("#f5f5f5")
             state: root.knapp_poly_hel.TB0_state
         Button:
-            text:str(root.knapp_poly_hel.antal) + ' st'
+            id: R2antal
+            text: root.knapp_poly_hel.antal + ' st'
         Button:
-            text:str(root.knapp_poly_hel.minuter_ova_regel) + ' min'
-
+            id: R2min
+            text: root.knapp_poly_hel.minuter_ova_regel + ' min'
         Button:
-            text:str(root.knapp_poly_hel.felproc_ova_regel) + '%'
-
+            id: R2proc
+            text: root.knapp_poly_hel.felproc_ova_regel + '%'
         ToggleButton:
  #           id: TB21
             group: 'poly_hel'
@@ -129,8 +138,6 @@
             state: root.knapp_poly_hel.TB11_state
             group: 'TB_rad2'
             background_color: utils.get_color_from_hex("f5f5f5")
-
-
         ToggleButton:
  #           id: TB22
             group: 'poly_hel'
@@ -153,19 +160,197 @@
                 root.knapp_poly_hel.n_st = int(self.text)
                 print(root.knapp_poly_hel.n_st)
 
+        #rad 3
+        ToggleButton:
+            group: 'method'
+#            id: TB3_0
+            font_size: 13
+            bold: True
+            text_color: utils.get_color_from_hex("#f2f2f2")
+            text:"Polynom Halvtal"
+            on_press:
+                root.knapp_kedjeregeln.TB0_state = 'normal'
+                root.knapp_poly_hel.TB0_state = 'normal'
+                root.knapp_poly_halv.TB0_state = 'down'
+                root.knapp_exp_e.TB0_state = 'normal'
+                root.knapp_exp_n.TB0_state = 'normal'
+            background_color: utils.get_color_from_hex("#f5f5f5")
+            state: root.knapp_poly_hel.TB0_state
+        Button:
+            id: R3antal
+            text: root.knapp_poly_halv.antal + ' st'
+        Button:
+            id: R3min
+            text: root.knapp_poly_halv.minuter_ova_regel + ' min'
+        Button:
+            id: R3proc
+            text: root.knapp_poly_halv.felproc_ova_regel + '%'
+        ToggleButton:
+ #           id: TB31
+            group: 'poly_halv'
+            text:'Derivera'
+            on_press:
+                root.knapp_poly_halv.TB11_state = 'down'
+                root.knapp_poly_halv.TB12_state = 'normal'
+             #   root.update()
+              #  root.animate_text()
+            state: root.knapp_poly_halv.TB11_state
+            group: 'TB_rad3'
+            background_color: utils.get_color_from_hex("f5f5f5")
+        ToggleButton:
+ #           id: TB32
+            group: 'poly_halv'
+            text:'Integrera'
+            on_press:
+                root.knapp_poly_halv.TB11_state = 'normal'
+                root.knapp_poly_halv.TB12_state = 'down'
+                #root.update()
+                #root.animate_text()
+            state: root.knapp_poly_halv.TB12_state
+            group: 'TB_rad3'
+            background_color: utils.get_color_from_hex("f5f5f5")
+
+        TextInput:
+ #           id:TI_2
+            text: str(root.knapp_poly_halv.n_st)
+            halign: 'center'
+            multiline: False
+            on_text:
+                root.knapp_poly_halv.n_st = int(self.text)
+                print(root.knapp_poly_halv.n_st)
+
+
+       #rad 4
+        ToggleButton:
+            group: 'method'
+#            id: TB3_0
+            font_size: 13
+            bold: True
+            text_color: utils.get_color_from_hex("#f2f2f2")
+            text:"Exponential e"
+            on_press:
+                root.knapp_kedjeregeln.TB0_state = 'normal'
+                root.knapp_poly_hel.TB0_state = 'normal'
+                root.knapp_poly_halv.TB0_state = 'normal'
+                root.knapp_exp_e.TB0_state = 'down'
+                root.knapp_exp_n.TB0_state = 'normal'
+            background_color: utils.get_color_from_hex("#f5f5f5")
+            state: root.knapp_exp_e.TB0_state
+        Button:
+            id: R4antal
+            text: root.knapp_exp_e.antal + ' st'
+        Button:
+            id: R4min
+            text: root.knapp_exp_e.minuter_ova_regel + ' min'
+        Button:
+            id: R4proc
+            text: root.knapp_exp_e.felproc_ova_regel + '%'
+        ToggleButton:
+ #           id: TB41
+            group: 'exp_e'
+            text:'Derivera'
+            on_press:
+                root.knapp_exp_e.TB11_state = 'down'
+                root.knapp_exp_e.TB12_state = 'normal'
+             #   root.update()
+              #  root.animate_text()
+            state: root.knapp_exp_e.TB11_state
+            group: 'TB_rad3'
+            background_color: utils.get_color_from_hex("f5f5f5")
+        ToggleButton:
+ #           id: TB42
+            group: 'exp_e'
+            text:'Integrera'
+            on_press:
+                root.knapp_exp_e.TB11_state = 'normal'
+                root.knapp_exp_e.TB12_state = 'down'
+                #root.update()
+                #root.animate_text()
+            state: root.knapp_exp_e.TB12_state
+            group: 'TB_rad4'
+            background_color: utils.get_color_from_hex("f5f5f5")
+
+        TextInput:
+ #           id:TI_2
+            text: str(root.knapp_exp_e.n_st)
+            halign: 'center'
+            multiline: False
+            on_text:
+                root.knapp_exp_e.n_st = int(self.text)
+                print(root.knapp_exp_e.n_st)
+
+        #rad 5
+        ToggleButton:
+            group: 'method'
+#            id: TB5_0
+            font_size: 13
+            bold: True
+            text_color: utils.get_color_from_hex("#f2f2f2")
+            text:"Exponential n"
+            on_press:
+                root.knapp_kedjeregeln.TB0_state = 'normal'
+                root.knapp_poly_hel.TB0_state = 'normal'
+                root.knapp_poly_halv.TB0_state = 'normal'
+                root.knapp_exp_e.TB0_state = 'normal'
+                root.knapp_exp_n.TB0_state = 'down'
+            background_color: utils.get_color_from_hex("#f5f5f5")
+            state: root.knapp_exp_n.TB0_state
+        Button:
+            id: R5antal
+            text: root.knapp_exp_n.antal + ' st'
+        Button:
+            id: R5min
+            text: root.knapp_exp_n.minuter_ova_regel + ' min'
+        Button:
+            id: R5proc
+            text: root.knapp_exp_n.felproc_ova_regel + '%'
+        ToggleButton:
+ #           id: TB51
+            group: 'exp_n'
+            text:'Derivera'
+            on_press:
+                root.knapp_exp_n.TB11_state = 'down'
+                root.knapp_exp_n.TB12_state = 'normal'
+             #   root.update()
+              #  root.animate_text()
+            state: root.knapp_exp_n.TB11_state
+            group: 'TB_rad5'
+            background_color: utils.get_color_from_hex("f5f5f5")
+        ToggleButton:
+ #           id: TB52
+            group: 'exp_n'
+            text:'Integrera'
+            on_press:
+                root.knapp_exp_n.TB11_state = 'normal'
+                root.knapp_exp_n.TB12_state = 'down'
+                #root.update()
+                #root.animate_text()
+            state: root.knapp_exp_n.TB12_state
+            group: 'TB_rad5'
+            background_color: utils.get_color_from_hex("f5f5f5")
+
+        TextInput:
+ #           id:TI_2
+            text: str(root.knapp_exp_n.n_st)
+            halign: 'center'
+            multiline: False
+            on_text:
+                root.knapp_exp_n.n_st = int(self.text)
+                print(root.knapp_exp_n.n_st)
+
         #Nedersta raden
         Button:
             text:"Med hjälp"
             size_hint:0.6,0.2
-            on_press: root.selected_method(root.knapp_kedjeregeln,root.knapp_poly_hel,edu_sign=True )
+            on_press:
+                root.selected_method(root.knapp_kedjeregeln, root.knapp_poly_hel, root.knapp_poly_halv, root.knapp_exp_e, root.knapp_exp_n, edu_sign=True )
             on_release:
-                root.practice_loop = False
                 app.change_screen("rakna_screen")
                 root.manager.transition.direction = 'left'
         Button:
             id: starta
             text:"Öva"
-            on_press:root.selected_method(root.knapp_kedjeregeln,root.knapp_poly_hel,edu_sign=False)
+            on_press:root.selected_method(root.knapp_kedjeregeln,root.knapp_poly_hel,root.knapp_poly_halv, root.knapp_exp_e, root.knapp_exp_n,edu_sign=False)
             on_release:
                 root.practice_loop = False
                 app.change_screen("rakna_screen")
@@ -177,7 +362,7 @@
             text:"Öva på tid"
             size_hint:0.6,0.2
             pos_hint: {"right": .5}
-            on_press:root.selected_method(root.knapp_kedjeregeln,root.knapp_poly_hel,edu_sign=False)
+            on_press:root.selected_method(root.knapp_kedjeregeln,root.knapp_poly_hel,root.knapp_poly_halv, root.knapp_exp_e, root.knapp_exp_n,edu_sign=False)
             on_release:
                 root.practice_loop = True
                 app.change_screen("rakna_screen")
