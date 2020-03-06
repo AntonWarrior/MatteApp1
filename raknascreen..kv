@@ -8,6 +8,7 @@
 
     problem_text: root.problem_text
     my_math_text: root.my_math_text
+    allt: root.allt
 #    ratt_svar_text: root.ratt_svar_text
 
     canvas:
@@ -30,6 +31,11 @@
             pos_hint: {"top": .85, "right": .9}
             color: utils.get_color_from_hex("##ededed")
         Label:
+            id: pyperclip
+            text: 'Tips: Ctrl + v => ' + root.pyperclip_txt
+            size_hint: .8, .5
+            pos_hint: {"top": .8, "right": .48}
+        Label:
             id: raknare
             text: str(root.antal)
             size_hint: .8, .5
@@ -47,8 +53,7 @@
                 correct_answer_text.text=root.ratt_svar_text
                 self.focused = True
                 root.tictoc('toc')
-
-
+                self.text = ''
         Label:
             id: correct_answer_text
           #  focus: True
@@ -59,6 +64,11 @@
             color: utils.get_color_from_hex("##ededed")
 
         Label:
+            text: "2020 v.1.0, Anton Fredö SY18, LBS Göteborg"
+            pos_hint:  {"top": .2, "right": 1.1}
+            size_hint: .5, .3
+
+        Label:
             id: correct_answer
             text: root.ratt_svar_text
             size_hint: .8, .5
@@ -67,26 +77,24 @@
             color: utils.get_color_from_hex("##ededed")
 
         #lägg default 'down'
-        Button:
-            id: B1
-            text: "Start"
-            bold:True
-            size_hint: .5, .1
-            pos_hint: {"top": .3, "right": .75}
-            on_press: root.do_math()
-            on_release:
-                root.tictoc('tic')
-                root.tictoc('toc')
-                root.update()
-                root.animate_text()
+#        Button:
+#            id: B1
+#            text: "Start"
+#            bold:True
+#            size_hint: .5, .1
+#            pos_hint: {"top": .3, "right": .75}
+#            on_press: root.do_math()
+#            on_release:
+#                root.tictoc('tic')
+#                root.tictoc('toc')
+#                root.update()
         Button:
             id: B2
             text: 'Back'
             size_hint: .3, .05
             pos_hint: {"top": .15, "right": .65}
-            on_release:
+            on_press:
+                root.i_update_allt(root.allt)
                 app.change_screen("home_screen")
                 root.manager.transition.direction = 'right'
-
-
 
